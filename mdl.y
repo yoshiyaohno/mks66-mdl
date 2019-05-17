@@ -112,7 +112,7 @@ Command : sphere dbl dbl dbl dbl
         | scale dbl dbl dbl str
             { CmdScale $2 $3 $4 (Just $5) }
 
-        | rotate str dbl        { CmdRotate (axisHelper $2) $1 Nothing }
+        | rotate str dbl        { CmdRotate (axisHelper $2) $3 Nothing }
         | rotate str dbl str    { CmdRotate (axisHelper $2) $3 (Just $4) }
         | push                  { CmdPush }
         | pop                   { CmdPop }
@@ -177,7 +177,6 @@ data Command
     | CmdWeb
     | CmdAmbient Db Db Db
     | CmdGenerateRayfiles
-
     deriving (Eq, Show)
 
 data Axis = AxisX | AxisY | AxisZ deriving (Show, Eq)
