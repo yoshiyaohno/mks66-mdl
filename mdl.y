@@ -5,7 +5,7 @@ import Lexer
 
 }
 
-%name parse
+%name parseReversed
 %tokentype { Token }
 %error { parseError }
 
@@ -138,8 +138,8 @@ Command : sphere dbl dbl dbl dbl
         | frames dbl                { CmdFrames $2 }
         | vary str dbl dbl dbl dbl  { CmdVary $2 $3 $4 $5 $6 }
         | shading shading_type      { CmdShading $2 }
-        | setknobs str              { CmdSetknobs $2 }
-        | focal str                 { CmdFocal $2 }
+        | setknobs dbl              { CmdSetknobs $2 }
+        | focal dbl                 { CmdFocal $2 }
         | web                       { CmdWeb }
         | ambient dbl dbl dbl       { CmdAmbient $2 $3 $4 }
         | generate_rayfiles         { CmdGenerateRayfiles }
@@ -172,8 +172,8 @@ data Command
     | CmdFrames Db
     | CmdVary String Db Db Db Db
     | CmdShading String
-    | CmdSetknobs String
-    | CmdFocal String
+    | CmdSetknobs Db
+    | CmdFocal Db
     | CmdWeb
     | CmdAmbient Db Db Db
     | CmdGenerateRayfiles
@@ -194,5 +194,8 @@ parseError _ = error "parse error haha"
 
 type Db = Double
 type MS = Maybe String
+
+parse :: [Token] -> [Command]
+parse = reverse . parseReversed
 
 }
