@@ -1,3 +1,5 @@
+Lexer.hs
+Parser.hs
 *.ppm
 *.png
 Main
