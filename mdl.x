@@ -1,5 +1,5 @@
 {
-module Lexer (lexString) where
+module Lexer where
 }
 
 %wrapper "basic"
@@ -21,6 +21,7 @@ tokens :-
     "save_coord_system" { const TkSaveCoords }
     "camera"            { const TkCamera }
     "ambient"           { const TkAmbient }
+    "sphere"            { const TkSphere }
     "torus"             { const TkTorus }
     "box"               { const TkBox }
     "line"              { const TkLine }
@@ -80,6 +81,6 @@ data Token  = TkDouble Double
             | TkShading     | TkShadingType String
             | TkSetknobs    | TkFocal
             | TkDisplay     | TkWeb
-            | TkColon
+            | TkColon       | TkSphere
             deriving (Eq, Show)
 }
