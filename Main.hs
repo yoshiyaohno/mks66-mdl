@@ -1,6 +1,8 @@
 module Main where
 
-import Parse
+import Parser
+import Lexer
+import Interpret
 import DrawMats
 
 import Control.Monad.State
@@ -10,6 +12,6 @@ import System.Environment
 main = do
     args <- getArgs
     script <- readFile (head args)
-    let cmds = parse $ lines script :: [StateT DrawMats IO ()]
-    runStateT (sequence_ cmds) emptyDM
+    let cmds = parse . lexString $ script
+    runStateT (interpret cmds) emptyDM
 
