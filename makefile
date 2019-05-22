@@ -1,4 +1,6 @@
 default: main
+	@echo
+	@echo rendering image...
 	./Main script
 
 main: Main.hs Parser.hs Transform.hs Line.hs Solids.hs Screen.hs DrawMats.hs \
