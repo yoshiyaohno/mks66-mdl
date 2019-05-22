@@ -30,7 +30,25 @@ cmd c = case c of
     CmdMove     a b         -> move     a b
     CmdScale    a b         -> scale    a b
     CmdRotate   a b c       -> rote     a b c
+    CmdDisplay              -> display
+    CmdSave path            -> save path
     _                       -> return ()
+
+save :: (MonadState DrawMats m, MonadIO m) => String -> m ()
+save path = do
+    dm <- get
+    liftIO $ do
+        writeFile ".tempimg.ppm" (printPixels . downsample $ getScreen dm)
+        callProcess "convert" [".tempimg.ppm", path]
+        removeFile ".tempimg.ppm"
+
+display :: (MonadState DrawMats m, MonadIO m) => m ()
+display = do
+    dm <- get
+    liftIO $ do
+        writeFile ".tempimg.ppm" (printPixels . downsample $ getScreen dm)
+        callProcess "eog" [".tempimg.ppm"]
+        removeFile ".tempimg.ppm"
 
 rote :: (MonadState DrawMats m) => Axis -> Db -> MS -> m ()
 rote ax theta _ = modify . modTransform $ (mappend $ roti ax theta)

@@ -157,10 +157,10 @@ data Command
     | CmdMove Vec3 MS       --done
     | CmdScale Vec3 MS      --done
     | CmdRotate Axis Db MS  --done
-    | CmdPush
-    | CmdPop
-    | CmdDisplay
-    | CmdSave String
+    | CmdPush   --done
+    | CmdPop    --done
+    | CmdDisplay        --done
+    | CmdSave String    --done
     | CmdLight String Vec3 Vec3
     | CmdConstants String Vec3 Vec3 Vec3 Vec3
     | CmdSaveCoords String
@@ -188,7 +188,7 @@ axisHelper (x:xs)
     | x == 'x' || x == 'X'  = AxisX
     | x == 'y' || x == 'Y'  = AxisY
     | x == 'z' || x == 'Z'  = AxisZ
-    | otherwise             = AxisX --haha
+    | otherwise = error $ "incorrect axis \"" ++ (x:xs) ++ "\"...somewhere"
 
 parseError :: [Token] -> a
 parseError _ = error "parse error haha"
