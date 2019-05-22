@@ -1,5 +1,5 @@
 {
-module Parser (parse) where
+module Parser where
 
 import Lexer
 
@@ -51,48 +51,48 @@ Input   : Input Command     { $2:$1 }
         ;
 
 Command : sphere dbl dbl dbl dbl
-            { CmdSphere Nothing $2 $3 $4 $5 Nothing }
+            { CmdSphere Nothing ($2,$3,$4) $5 Nothing }
         | sphere str dbl dbl dbl dbl
-            { CmdSphere (Just $2) $3 $4 $5 $6 Nothing }
+            { CmdSphere (Just $2) ($3,$4,$5) $6 Nothing }
         | sphere dbl dbl dbl dbl str
-            { CmdSphere Nothing $2 $3 $4 $5 (Just $6) }
+            { CmdSphere Nothing ($2,$3,$4) $5 (Just $6) }
         | sphere str dbl dbl dbl dbl str
-            { CmdSphere (Just $2) $3 $4 $5 $6 (Just $7) }
+            { CmdSphere (Just $2) ($3,$4,$5) $6 (Just $7) }
 
         | box dbl dbl dbl dbl dbl dbl
-            { CmdBox Nothing $2 $3 $4 $5 $6 $7 Nothing }
+            { CmdBox Nothing ($2,$3,$4) ($5,$6,$7) Nothing }
         | box str dbl dbl dbl dbl dbl dbl
-            { CmdBox (Just $2) $3 $4 $5 $6 $7 $8 Nothing }
+            { CmdBox (Just $2) ($3,$4,$5) ($6,$7,$8) Nothing }
         | box dbl dbl dbl dbl dbl dbl str
-            { CmdBox Nothing $2 $3 $4 $5 $6 $7 (Just $8) }
+            { CmdBox Nothing ($2,$3,$4) ($5,$6,$7) (Just $8) }
         | box str dbl dbl dbl dbl dbl dbl str
-            { CmdBox (Just $2) $3 $4 $5 $6 $7 $8 (Just $9) }
+            { CmdBox (Just $2) ($3,$4,$5) ($6,$7,$8) (Just $9) }
 
         | torus dbl dbl dbl dbl dbl
-            { CmdTorus Nothing $2 $3 $4 $5 $6 Nothing }
+            { CmdTorus Nothing ($2,$3,$4) $5 $6 Nothing }
         | torus str dbl dbl dbl dbl dbl
-            { CmdTorus (Just $2) $3 $4 $5 $6 $7 Nothing }
+            { CmdTorus (Just $2) ($3,$4,$5) $6 $7 Nothing }
         | torus dbl dbl dbl dbl dbl str
-            { CmdTorus Nothing $2 $3 $4 $5 $6 (Just $7) }
+            { CmdTorus Nothing ($2,$3,$4) $5 $6 (Just $7) }
         | torus str dbl dbl dbl dbl dbl str
-            { CmdTorus (Just $2) $3 $4 $5 $6 $7 (Just $8) }
+            { CmdTorus (Just $2) ($3,$4,$5) $6 $7 (Just $8) }
 
         | line dbl dbl dbl dbl dbl dbl
-            { CmdLine Nothing $2 $3 $4 Nothing $5 $6 $7 Nothing }
+            { CmdLine Nothing ($2,$3,$4) Nothing ($5,$6,$7) Nothing }
         | line dbl dbl dbl str dbl dbl dbl
-            { CmdLine Nothing $2 $3 $4 (Just $5) $6 $7 $8 Nothing }
+            { CmdLine Nothing ($2,$3,$4) (Just $5) ($6,$7,$8) Nothing }
         | line dbl dbl dbl dbl dbl dbl str 
-            { CmdLine Nothing $2 $3 $4 Nothing $5 $6 $7 (Just $8) }
+            { CmdLine Nothing ($2,$3,$4) Nothing ($5,$6,$7) (Just $8) }
         | line dbl dbl dbl str dbl dbl dbl str
-            { CmdLine Nothing $2 $3 $4 (Just $5) $6 $7 $8 (Just $9) }
+            { CmdLine Nothing ($2,$3,$4) (Just $5) ($6,$7,$8) (Just $9) }
         | line str dbl dbl dbl dbl dbl dbl
-            { CmdLine (Just $2) $3 $4 $5 Nothing $6 $7 $8 Nothing }
+            { CmdLine (Just $2) ($3,$4,$5) Nothing ($6,$7,$8) Nothing }
         | line str dbl dbl dbl str dbl dbl dbl
-            { CmdLine (Just $2) $3 $4 $5 (Just $6) $7 $8 $9 Nothing }
+            { CmdLine (Just $2) ($3,$4,$5) (Just $6) ($7,$8,$9) Nothing }
         | line str dbl dbl dbl dbl dbl dbl str
-            { CmdLine (Just $2) $3 $4 $5 Nothing $6 $7 $8 (Just $9) }
+            { CmdLine (Just $2) ($3,$4,$5) Nothing ($6,$7,$8) (Just $9) }
         | line str dbl dbl dbl str dbl dbl dbl str
-            { CmdLine (Just $2) $3 $4 $5 (Just $6) $7 $8 $9 (Just $10) }
+            { CmdLine (Just $2) ($3,$4,$5) (Just $6) ($7,$8,$9) (Just $10) }
 
         | mesh ':' str
             { CmdMesh Nothing $3 Nothing }
@@ -104,13 +104,13 @@ Command : sphere dbl dbl dbl dbl
             { CmdMesh (Just $2) $4 (Just $5) }
 
         | move dbl dbl dbl
-            { CmdMove $2 $3 $4 Nothing }
+            { CmdMove ($2,$3,$4) Nothing }
         | move dbl dbl dbl str
-            { CmdMove $2 $3 $4 (Just $5) }
+            { CmdMove ($2,$3,$4) (Just $5) }
         | scale dbl dbl dbl
-            { CmdScale $2 $3 $4 Nothing }
+            { CmdScale ($2,$3,$4) Nothing }
         | scale dbl dbl dbl str
-            { CmdScale $2 $3 $4 (Just $5) }
+            { CmdScale ($2,$3,$4) (Just $5) }
 
         | rotate str dbl        { CmdRotate (axisHelper $2) $3 Nothing }
         | rotate str dbl str    { CmdRotate (axisHelper $2) $3 (Just $4) }
@@ -120,16 +120,16 @@ Command : sphere dbl dbl dbl dbl
         | save str              { CmdSave $2 }
 
         | light str dbl dbl dbl dbl dbl dbl
-            { CmdLight $2 $3 $4 $5 $6 $7 $8 }
+            { CmdLight $2 ($3,$4,$5) ($6,$7,$8) }
         | constants str dbl dbl dbl dbl dbl dbl dbl dbl dbl
-            { CmdConstants $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 0 0 0 }
+            { CmdConstants $2 ($3,$4,$5) ($6,$7,$8) ($9,$10,$11) (0,0,0) }
         | constants str dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl
-            { CmdConstants $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 }
+            { CmdConstants $2 ($3,$4,$5) ($6,$7,$8) ($9,$10,$11) ($12,$13,$14) }
 
         | camera dbl dbl dbl dbl dbl dbl
-            { CmdCamera $2 $3 $4 $5 $6 $7 }
+            { CmdCamera ($2,$3,$4) ($5,$6,$7) }
         | texture str dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl
-            { CmdTexture $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 }
+            { CmdTexture $2 ($3,$4,$5) ($6,$7,$8) ($9,$10,$11) ($12,$13,$14) }
 
         | set str dbl               { CmdSet $2 $3 }
         | basename str              { CmdBasename $2 }
@@ -141,30 +141,31 @@ Command : sphere dbl dbl dbl dbl
         | setknobs dbl              { CmdSetknobs $2 }
         | focal dbl                 { CmdFocal $2 }
         | web                       { CmdWeb }
-        | ambient dbl dbl dbl       { CmdAmbient $2 $3 $4 }
+        | ambient dbl dbl dbl       { CmdAmbient ($2,$3,$4) }
         | generate_rayfiles         { CmdGenerateRayfiles }
         | save_coords str           { CmdSaveCoords $2 }
         
 {
+type Vec3 = (Double, Double, Double)
 
 data Command
-    = CmdSphere MS Db Db Db Db MS
-    | CmdBox MS Db Db Db Db Db Db MS
-    | CmdTorus MS Db Db Db Db Db MS
-    | CmdLine MS Db Db Db MS Db Db Db MS
+    = CmdSphere MS Vec3 Db MS       --done
+    | CmdBox MS Vec3 Vec3 MS        --done
+    | CmdTorus MS Vec3 Db Db MS     --done
+    | CmdLine MS Vec3 MS Vec3 MS    --done
     | CmdMesh MS String MS
-    | CmdMove Db Db Db MS
-    | CmdScale Db Db Db MS
-    | CmdRotate Axis Db MS
+    | CmdMove Vec3 MS       --done
+    | CmdScale Vec3 MS      --done
+    | CmdRotate Axis Db MS  --done
     | CmdPush
     | CmdPop
     | CmdDisplay
     | CmdSave String
-    | CmdLight String Db Db Db Db Db Db
-    | CmdConstants String Db Db Db Db Db Db Db Db Db Db Db Db
+    | CmdLight String Vec3 Vec3
+    | CmdConstants String Vec3 Vec3 Vec3 Vec3
     | CmdSaveCoords String
-    | CmdCamera Db Db Db Db Db Db
-    | CmdTexture String Db Db Db Db Db Db Db Db Db Db Db Db
+    | CmdCamera Vec3 Vec3
+    | CmdTexture String Vec3 Vec3 Vec3 Vec3
     | CmdSet String Db
     | CmdBasename String
     | CmdSaveKnobs String
@@ -175,7 +176,7 @@ data Command
     | CmdSetknobs Db
     | CmdFocal Db
     | CmdWeb
-    | CmdAmbient Db Db Db
+    | CmdAmbient Vec3
     | CmdGenerateRayfiles
     deriving (Eq, Show)
 
