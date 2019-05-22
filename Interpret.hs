@@ -32,6 +32,7 @@ cmd c = case c of
     CmdRotate   a b c       -> rote     a b c
     CmdDisplay              -> display
     CmdSave path            -> save path
+--  CmdConstants s r g b i a-> constants s r g b i a
     _                       -> return ()
 
 save :: (MonadState DrawMats m, MonadIO m) => String -> m ()
@@ -71,19 +72,19 @@ line _ (x0,y0,z0) _ (x1,y1,z1) _ = do
     modify . modScreen $ drawLine red (fmap round ln)
 
 box :: (MonadState DrawMats m) => MS -> Vec3 -> Vec3 -> MS -> m ()
-box _ (cx,cy,cz) (w,h,d) _ = do
+box mat (cx,cy,cz) (w,h,d) _ = do
     dm <- get
     let tris = S.box cx cy cz w h d
     drawTriangles $ trTris dm tris
 
 sphere :: (MonadState DrawMats m) => MS -> Vec3 -> Db -> MS -> m ()
-sphere _ (cx,cy,cz) r _ = do
+sphere mat (cx,cy,cz) r _ = do
     dm <- get
     let tris = S.sphere cx cy cz r
     drawTriangles $ trTris dm tris
     
 torus :: (MonadState DrawMats m) => MS -> Vec3 -> Db -> Db -> MS -> m ()
-torus _ (cx,cy,cz) r0 r1 _ = do
+torus mat (cx,cy,cz) r0 r1 _ = do
     dm <- get
     let tris = S.torus cx cy cz r0 r1
     drawTriangles $ trTris dm tris

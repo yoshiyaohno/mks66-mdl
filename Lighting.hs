@@ -10,34 +10,36 @@ import Data.Array.Unboxed
 import Control.Monad.State
 import qualified Data.Set as S
 
-drawTriangle :: (MonadState DrawMats m) => Triangle Double -> m ()
-drawTriangle tr = do
+drawTriangle :: (MonadState DrawMats m) => Material -> Triangle Double -> m ()
+drawTriangle mat tr = do
     dm <- get
     let pxs = scanTriangle tr
         (toDraw, newZB) = runState (plotPxs pxs) (getZBuf dm)
-        c = colorTriangle tr
+        c = colorTriangle mat tr
     put $ dm {getZBuf = newZB}
     modify.modScreen $ draw [((pgetX p, pgetY p), c) | p <- S.toList toDraw]
 
-drawTriangles :: (MonadState DrawMats m) => [Triangle Double] -> m ()
-drawTriangles = mapM_ drawTriangle . bfCull
+drawTriangles :: (MonadState DrawMats m) => Material -> [Triangle Double] -> m ()
+drawTriangles mat = mapM_ (drawTriangle mat) . bfCull
 
-colorTriangle :: Triangle Double -> Color
+colorTriangle :: Material -> Triangle Double -> Color
 --hardcoded light moments
-colorTriangle tr =
+colorTriangle (Material kar kdr ksr kag kdg ksg kab kdb ksb ir ig ib alph) tr =
     let norm = normalize $ normal tr
         view = Vect 0 0 1 0
-        hhhh = normalize $ Vect 0 1 1 0
+        hhhh = normalize $ Vect 0 1 1 0     -- halfway vector
         lght = Vect 0 1 0 0
-        ka   = 0.1; kd = 0.3; ks = 0.9
+        hDn  = max 0 $ hhhh`dot`norm        -- reflecton intensity ish
+        lDn  = max 0 $ lght`dot`norm        -- diffuse intensity ish
         ia   = 255; id = 255; is = 255
-        alph = 14
-        lDn  = max 0 $ lght`dot`norm
-        hDn  = max 0 $ hhhh`dot`norm
-        intensity = min 255 $ round
-            (ka*ia + kd*lDn*id + is*ks*(hDn**alph))
+        -- above here is the lighting stuff--that'll have to change some day
+        theCalc ka kd ks alp =
+            (ka*ia + kd*lDn*id + is*ks*(hDn**alp))      -- crunchy coding
+        intense_r = min 255 . round $ theCalc kar kdr ksr alph
+        intense_g = min 255 . round $ theCalc kag kdg ksg alph
+        intense_b = min 255 . round $ theCalc kab kdb ksb alph
     in
-        color intensity intensity intensity
+        color intense_r intense_g intense_b
 
 plotPxs :: (MonadState ZBuf m) => S.Set Pixel -> m (S.Set Pixel)
 plotPxs pxs = do

@@ -122,9 +122,12 @@ Command : sphere dbl dbl dbl dbl
         | light str dbl dbl dbl dbl dbl dbl
             { CmdLight $2 ($3,$4,$5) ($6,$7,$8) }
         | constants str dbl dbl dbl dbl dbl dbl dbl dbl dbl
-            { CmdConstants $2 ($3,$4,$5) ($6,$7,$8) ($9,$10,$11) (0,0,0) }
+            { CmdConstants $2 ($3,$4,$5) ($6,$7,$8) ($9,$10,$11) (0,0,0) 10 }
+        | constants str dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl
+            { CmdConstants $2 ($3,$4,$5) ($6,$7,$8) ($9,$10,$11) (0,0,0) $12 }
         | constants str dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl dbl
-            { CmdConstants $2 ($3,$4,$5) ($6,$7,$8) ($9,$10,$11) ($12,$13,$14) }
+            { CmdConstants $2 ($3,$4,$5) ($6,$7,$8) ($9,$10,$11) ($12,$13,$14)
+                10 }
 
         | camera dbl dbl dbl dbl dbl dbl
             { CmdCamera ($2,$3,$4) ($5,$6,$7) }
@@ -162,7 +165,8 @@ data Command
     | CmdDisplay        --done
     | CmdSave String    --done
     | CmdLight String Vec3 Vec3
-    | CmdConstants String Vec3 Vec3 Vec3 Vec3
+    | CmdConstants String Vec3 Vec3 Vec3 Vec3 Db
+
     | CmdSaveCoords String
     | CmdCamera Vec3 Vec3
     | CmdTexture String Vec3 Vec3 Vec3 Vec3
