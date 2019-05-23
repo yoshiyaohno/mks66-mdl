@@ -27,8 +27,8 @@ colorTriangle :: Material -> Triangle Double -> Color
 colorTriangle (Material kar kdr ksr kag kdg ksg kab kdb ksb ir ig ib alph) tr =
     let norm = normalize $ normal tr
         view = Vect 0 0 1 0
-        hhhh = normalize $ Vect 0 1 1 0     -- halfway vector
-        lght = Vect 0 1 0 0
+        hhhh = normalize $ Vect (-1) 2 3 0     -- halfway vector
+        lght = normalize $ Vect (-1) 2 2 0
         hDn  = max 0 $ hhhh`dot`norm        -- reflecton intensity ish
         lDn  = max 0 $ lght`dot`norm        -- diffuse intensity ish
         ia   = 50; id = 255; is = 255
