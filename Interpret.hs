@@ -32,8 +32,14 @@ cmd c = case c of
     CmdRotate   a b c       -> rote     a b c
     CmdDisplay              -> display
     CmdSave path            -> save path
---  CmdConstants s r g b i a-> constants s r g b i a
+    CmdConstants s r g b i a-> constants s r g b i a
     _                       -> return ()
+
+constants :: (MonadState DrawMats m) =>
+    String -> Vec3 -> Vec3 -> Vec3 -> Vec3 -> Db -> m ()
+constants name (kar,kdr,ksr) (kag,kdg,ksg) (kab,kdb,ksb) (ir,ig,ib) alph =
+    modify $ addMaterial name m
+        where m = Material kar kdr ksr kag kdg ksg kab kdb ksb ir ig ib alph
 
 save :: (MonadState DrawMats m, MonadIO m) => String -> m ()
 save path = do
@@ -75,19 +81,28 @@ box :: (MonadState DrawMats m) => MS -> Vec3 -> Vec3 -> MS -> m ()
 box mat (cx,cy,cz) (w,h,d) _ = do
     dm <- get
     let tris = S.box cx cy cz w h d
-    drawTriangles $ trTris dm tris
+        m = case mat of
+            Nothing -> defaultMat
+            Just s  -> findMaterial s dm
+    drawTriangles m $ trTris dm tris
 
 sphere :: (MonadState DrawMats m) => MS -> Vec3 -> Db -> MS -> m ()
 sphere mat (cx,cy,cz) r _ = do
     dm <- get
     let tris = S.sphere cx cy cz r
-    drawTriangles $ trTris dm tris
+        m = case mat of
+            Nothing -> defaultMat
+            Just s  -> findMaterial s dm
+    drawTriangles m $ trTris dm tris
     
 torus :: (MonadState DrawMats m) => MS -> Vec3 -> Db -> Db -> MS -> m ()
 torus mat (cx,cy,cz) r0 r1 _ = do
     dm <- get
     let tris = S.torus cx cy cz r0 r1
-    drawTriangles $ trTris dm tris
+        m = case mat of
+            Nothing -> defaultMat
+            Just s  -> findMaterial s dm
+    drawTriangles m $ trTris dm tris
 
 push :: (MonadState DrawMats m) => m ()
 push = modify pushTransform

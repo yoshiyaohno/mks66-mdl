@@ -31,7 +31,7 @@ colorTriangle (Material kar kdr ksr kag kdg ksg kab kdb ksb ir ig ib alph) tr =
         lght = Vect 0 1 0 0
         hDn  = max 0 $ hhhh`dot`norm        -- reflecton intensity ish
         lDn  = max 0 $ lght`dot`norm        -- diffuse intensity ish
-        ia   = 255; id = 255; is = 255
+        ia   = 50; id = 255; is = 255
         -- above here is the lighting stuff--that'll have to change some day
         theCalc ka kd ks alp =
             (ka*ia + kd*lDn*id + is*ks*(hDn**alp))      -- crunchy coding

@@ -16,12 +16,22 @@ data Material = Material
     , alph :: Double
     }
 
+defaultMat :: Material
+defaultMat = Material
+    0.1 0.6 0.4
+    0.1 0.6 0.4
+    0.1 0.6 0.4
+    0   0   0
+    10
+    -- god tier formatting
+
+type Materials = M.Map String Material
 type Args = [String]
 data DrawMats = DrawMats
      { getScreen :: Screen
      , getZBuf   :: ZBuf
      , getTStack :: [Transform Double]
-     , getMats   :: M.Map String Material
+     , getMats   :: Materials
      }
 
 emptyDM :: DrawMats
@@ -32,8 +42,23 @@ emptyDM = DrawMats
     , getMats   = M.empty
     }
 
+addMaterial :: String -> Material -> DrawMats -> DrawMats
+addMaterial name mat dm =
+    case (M.lookup name $ getMats dm) of
+        Nothing -> modMats (M.insert name mat) dm
+        Just _  -> error $ "already defined material: " ++ name
+
+findMaterial :: String -> DrawMats -> Material
+findMaterial name dm =
+    case (M.lookup name $ getMats dm) of
+        Nothing -> error $ "no such material: " ++ name
+        Just m  -> m
+
 trTris :: DrawMats -> [Triangle Double] -> [Triangle Double]
 trTris dm = map (trTriangle $ getTransform dm)
+
+modMats :: (Materials -> Materials) -> DrawMats -> DrawMats
+modMats f dm = dm { getMats = f $ getMats dm }
 
 modScreen :: (Screen -> Screen) -> DrawMats -> DrawMats
 modScreen f dm = dm { getScreen = f $ getScreen dm }
